@@ -1,0 +1,110 @@
+//
+//  Main.swift
+//  testik
+//
+//  Created by Ivan Pokasov on 24.02.2021.
+//
+//.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 600)
+
+import SwiftUI
+
+struct LoadScreen: View {
+    
+    @State var animate = false
+    @State var endSplash = false
+    
+    var body: some View {
+        
+        ZStack{
+            
+            Main()
+            
+            ZStack{
+                
+                Color("bg")
+                
+                Image("LargeLogo").resizable().renderingMode(.original).aspectRatio(contentMode: animate ? .fill : .fit).frame(width: animate ? nil : 85, height: animate ? nil  :85).scaleEffect(animate ? 3 : 1).frame(width: UIScreen.main.bounds.width)
+            }.ignoresSafeArea(.all, edges: .all).onAppear(perform: animateSplash).opacity(endSplash ? 0 : 1)
+        }
+    }
+    
+    func animateSplash(){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            withAnimation(Animation.easeOut(duration: 0.55)){animate.toggle()}
+            withAnimation(Animation.linear(duration: 0.45)){endSplash.toggle()}
+        }
+    }
+}
+
+struct Main: View {
+    
+    @State private var emoji = ""
+    @State private var text = ""
+    @State private var useLike = false
+    @State private var cardon = false
+    @State private var selectedTabCards = 0
+    @State private var tell = false
+    
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Color(#colorLiteral(red: 0.9410838485, green: 0.9412414432, blue: 0.9410631061, alpha: 1))
+                    .edgesIgnoringSafeArea(.all)
+                VStack {
+                    Text("About Hype").font(.system(size: 38, weight: .semibold)).frame(width: 180, height: 41, alignment: .top)
+                    Text("One story, one life, one day").font(.system(size: 14, weight: .regular)).frame(width: 180, height: 16, alignment: .top)
+                    VStack {
+                        HStack {
+                            TextField("Feelings in 3 emoji", text: $emoji).frame(width: 247, height: 36, alignment: .leading)
+                            Button(action: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/{}/*@END_MENU_TOKEN@*/) {
+                                Image("send").frame(width: 36, height: 14, alignment: .top)
+                            }
+                        }
+                        TextField("Message", text: $text).frame(width: 291, height: 462, alignment: .topLeading)
+                    }.frame(width: 339, height: 552, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/).background(Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))).cornerRadius(43).shadow(color: Color(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)).opacity(0.1), radius: 10, x: 0, y: 4).padding(.all, 10.0)
+                    HStack {
+                        Button(action: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Action@*/{}/*@END_MENU_TOKEN@*/) {
+                            Text("69K 🌈 ").font(.system(size: 18, weight: .semibold)).foregroundColor(.black).frame(width: 90, height: 40, alignment: .center).background(Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))).cornerRadius(43).shadow(color: Color(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)).opacity(0.1), radius: 10, x: 0, y: 4)
+                        }
+                        Button(action: {self.cardon.toggle()}) {
+                            Text("Cards").font(.system(size: 18, weight: .semibold)).foregroundColor(.black).frame(width: 90, height: 40, alignment: .center).background(Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))).cornerRadius(43).shadow(color: Color(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)).opacity(0.1), radius: 10, x: 0, y: 4)
+                        }
+                        NavigationLink(destination: Help(),
+                                       label: {
+                            Text("Help 💸").font(.system(size: 18, weight: .semibold)).foregroundColor(.black).frame(width: 90, height: 40, alignment: .center).background(Color(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1))).cornerRadius(43).shadow(color: Color(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)).opacity(0.1), radius: 10, x: 0, y: 4)
+                        })
+                    }.padding(.bottom, 40)
+                    NavigationLink(
+                        destination: Write(),
+                        label: {
+                            Text("Buy this story").font(.system(size: 18, weight: .black)).foregroundColor(.white).frame(width: 291, height: 53, alignment: .center).background(Color(#colorLiteral(red: 0.3647058824, green: 0.6901960784, blue: 0.4588235294, alpha: 1))).cornerRadius(43).shadow(color: Color(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)).opacity(0.1), radius: 10, x: 0, y: 4)
+                        })
+                }.disabled(cardon ? true : false)
+                .blur(radius: cardon ? 60 : 0)
+                if cardon {
+                    TabView(selection: $selectedTabCards) {
+                        CardView(section: sectionData[3]).tag(3)
+                        CardView(section: sectionData[4]).tag(4)
+                        CardView(section: sectionData[5]).tag(5)
+                        CardView(section: sectionData[6]).tag(6)
+                        CardView(section: sectionData[7]).tag(7)
+                        CardView(section: sectionData[8]).tag(8)
+                    }.tabViewStyle(PageTabViewStyle()).transition(AnyTransition.scale.animation(.easeInOut(duration: 0.3))).frame(height: UIScreen.main.bounds.height-73)
+                    Rectangle().padding(.top, 560.0).frame(height: 760.0).foregroundColor(Color.black.opacity(0.000000000000000000001)).onTapGesture{self.cardon.toggle()}.edgesIgnoringSafeArea(.top)
+                    Rectangle().padding(.bottom, 633.0).frame(alignment: .top).foregroundColor(Color.black.opacity(0.000000000000000000001)).onTapGesture{self.cardon.toggle()}.edgesIgnoringSafeArea(.all)
+                    Rectangle().padding(.leading, 383.0).frame(height: 760.0).frame(alignment: .top).foregroundColor(Color.black.opacity(0.000000000000000000001)).onTapGesture{self.cardon.toggle()}.edgesIgnoringSafeArea(.all)
+                    Rectangle().padding(.trailing, 383.0).frame(height: 760.0).frame(alignment: .top).foregroundColor(Color.black.opacity(0.000000000000000000001)).onTapGesture{self.cardon.toggle()}.edgesIgnoringSafeArea(.all)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2)).navigationBarHidden(true)
+            .navigationBarTitle(Text("Back"))
+        }
+    }
+}
+
+
+struct Main_Previews: PreviewProvider {
+    static var previews: some View {
+        Main()
+    }
+}
